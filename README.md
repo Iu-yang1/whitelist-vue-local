@@ -1,4 +1,8 @@
 # Minecraft 白名单申请系统
+*[源仓库:pilgrimage233/whitelist-vue][1]*
+
+
+  [1]: https://github.com/pilgrimage233/whitelist-vue
 
 ## 功能特性
 
