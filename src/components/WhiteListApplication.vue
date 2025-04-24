@@ -7,135 +7,154 @@
     <SakuraBackground
         :currentTheme="currentTheme"
     />
-    <div
-        v-if="!isMobile"
-        class="server-status-container"
-        :class="{ 'form-focused': isFormFocused }"
-    >
-      <div class="status-header">
-        <div class="header-title">
-          <i class="el-icon-monitor"></i>
-          <span>服务器状态</span>
-          <el-button
-              :loading="loading"
-              class="refresh-btn"
-              size="small"
-              @click="debouncedRefresh(true)"
-          >
-            <el-icon>
-              <Refresh/>
-            </el-icon>
-          </el-button>
-        </div>
+    <div class="main-content">
+      <div class="progress-container">
+        <FilterBar
+          :steps="['加入须知', '白名单填写', '等待审核', '下载整合包']"
+          :currentStep="2"
+        />
       </div>
-      <div class="status-content">
-        <div v-if="initialLoading" class="loading-state">
-          <el-icon class="loading-icon">
-            <Loading/>
-          </el-icon>
-          <span>加载中...</span>
+      <div
+          v-if="!isMobile"
+          class="server-status-container"
+          :class="{ 'form-focused': isFormFocused }"
+      >
+        <div class="status-header">
+          <div class="header-title">
+            <i class="el-icon-monitor"></i>
+            <span>服务器状态</span>
+            <el-button
+                :loading="loading"
+                class="refresh-btn"
+                size="small"
+                @click="debouncedRefresh(true)"
+            >
+              <el-icon>
+                <Refresh/>
+              </el-icon>
+            </el-button>
+          </div>
         </div>
+        <div class="status-content">
+          <div v-if="initialLoading" class="loading-state">
+            <el-icon class="loading-icon">
+              <Loading/>
+            </el-icon>
+            <span>加载中...</span>
+          </div>
 
-        <template v-else>
-          <div v-for="(server, index) in displayedServers"
-               :key="server.name"
-               class="server-block animate-in">
-            <div class="server-name">
-              <i class="el-icon-connection"></i>
-              {{ server.name }}
-            </div>
-            <div class="online-info">
-              <div v-if="server.players.length > 0" class="player-list">
-                <div class="players-label">
-                  <i class="el-icon-user"></i>
-                  在线玩家 ({{ server.playerCount }})：
-                </div>
-                <div class="players-container">
-                  <el-tag
-                      v-for="player in server.players"
-                      :key="player"
-                      class="player-tag"
-                      effect="light"
-                      size="small"
-                  >
-                    {{ player }}
-                  </el-tag>
+          <template v-else>
+            <div v-for="(server, index) in displayedServers"
+                 :key="server.name"
+                 class="server-block animate-in">
+              <div class="server-name">
+                <i class="el-icon-connection"></i>
+                {{ server.name }}
+              </div>
+              <div class="online-info">
+                <div v-if="server.players.length > 0" class="player-list">
+                  <div class="players-label">
+                    <i class="el-icon-user"></i>
+                    在线玩家 ({{ server.playerCount }})：
+                  </div>
+                  <div class="players-container">
+                    <el-tag
+                        v-for="player in server.players"
+                        :key="player"
+                        class="player-tag"
+                        effect="light"
+                        size="small"
+                    >
+                      {{ player }}
+                    </el-tag>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div v-if="showViewMore" class="view-more-container">
-            <el-button
-                class="view-more-btn"
-                type="primary"
-                text
-                @click="$router.push('/server-status')"
-            >
-              <el-icon><ArrowRight /></el-icon>
-              查看更多服务器
-            </el-button>
-          </div>
+            <div v-if="showViewMore" class="view-more-container">
+              <el-button
+                  class="view-more-btn"
+                  type="primary"
+                  text
+                  @click="$router.push('/server-status')"
+              >
+                <el-icon><ArrowRight /></el-icon>
+                查看更多服务器
+              </el-button>
+            </div>
 
-          <div class="query-time animate-in">
-            <i class="el-icon-time"></i>
-            {{ serverStatus.queryTime }}
-          </div>
-        </template>
-      </div>
-    </div>
-
-    <div
-        class="form-container"
-        :class="{ 'focused': isFormFocused }"
-        @click="handleFormFocus"
-        @touchstart="handleFormFocus"
-    >
-      <div class="title-container">
-        <i class="el-icon-user-solid"></i>
-        <h2>白名单申请</h2>
-        <el-button
-            class="view-members-btn"
-            text
-            type="primary"
-            @click="$router.push('/whitelist-members')"
-        >
-          <el-icon>
-            <User/>
-          </el-icon>
-          查看成员
-        </el-button>
+            <div class="query-time animate-in">
+              <i class="el-icon-time"></i>
+              {{ serverStatus.queryTime }}
+            </div>
+          </template>
+        </div>
       </div>
 
-      <div class="description">
-        欢迎加入我们的服务器！请填写以下信息完成白名单申请。
-      </div>
-
-      <el-form :model="form" class="animated-form" label-width="auto">
-        <el-form-item label="ID：">
-          <el-input v-model="form.userName" placeholder="请输入游戏名称"></el-input>
-        </el-form-item>
-        <el-form-item label="QQ：">
-          <el-input v-model="form.qqNum" placeholder="请输入QQ号"></el-input>
-        </el-form-item>
-        <el-form-item label="正版：">
-          <el-radio-group v-model="form.onlineFlag">
-            <el-radio label="1">是</el-radio>
-            <el-radio label="0">否</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="描述：" label-width="auto">
-          <el-input v-model="form.remark" placeholder="请输入描述 非必填" type="textarea"></el-input>
-        </el-form-item>
-        <div class="button-group">
-          <el-button v-loading.fullscreen.lock="fullscreenLoading"
-                     class="submit-btn"
-                     type="primary"
-                     @click="submitForm">
-            <i class="el-icon-check"></i> 提交申请
+      <div
+          class="form-container"
+          :class="{ 'focused': isFormFocused }"
+          @click="handleFormFocus"
+          @touchstart="handleFormFocus"
+      >
+        <div class="title-container">
+          <i class="el-icon-user-solid"></i>
+          <h2>白名单申请</h2>
+          <el-button
+              class="view-members-btn"
+              text
+              type="primary"
+              @click="$router.push('/whitelist-members')"
+          >
+            <el-icon>
+              <User/>
+            </el-icon>
+            查看成员
           </el-button>
         </div>
-      </el-form>
+
+        <div class="description">
+          欢迎加入我们的服务器！请填写以下信息完成白名单申请。
+        </div>
+
+        <el-form :model="form" class="animated-form" label-width="auto">
+          <el-form-item label="ID：">
+            <el-input v-model="form.userName" placeholder="请输入游戏名称"></el-input>
+          </el-form-item>
+          <el-form-item label="QQ：">
+            <el-input v-model="form.qqNum" placeholder="请输入QQ号"></el-input>
+          </el-form-item>
+          <el-form-item label="正版：">
+            <el-radio-group v-model="form.onlineFlag">
+              <el-radio label="1">是</el-radio>
+              <el-radio label="0">否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="描述：" label-width="auto">
+            <el-input v-model="form.remark" placeholder="请输入描述 非必填" type="textarea"></el-input>
+          </el-form-item>
+          <div class="checkbox-group">
+            <el-checkbox v-model="form.checkedItems.joinedGroup">
+              我已加群
+            </el-checkbox>
+            <el-checkbox v-model="form.checkedItems.readManual">
+              <span class="clickable-text" @click="readManual">我已阅读手册</span>
+            </el-checkbox>
+            <el-checkbox v-model="form.checkedItems.knowIP">
+              <span class="clickable-text" @click="showIPInfo">已知晓ip</span>
+            </el-checkbox>
+          </div>
+          <div class="button-group">
+            <el-button v-loading.fullscreen.lock="fullscreenLoading"
+                       class="submit-btn"
+                       type="primary"
+                       @click="submitForm">
+              <i class="el-icon-check"></i> 提交申请
+            </el-button>
+          </div>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -147,6 +166,9 @@ import axios from 'axios';
 import {ArrowRight, Loading, Refresh, User} from '@element-plus/icons-vue'
 import {debounce} from 'lodash-es';
 import SakuraBackground from './common/SakuraBackground.vue'
+import FilterBar from './common/FilterBar.vue';
+import { useRouter } from 'vue-router';
+import {WIKI} from "@/config/links.js";
 
 const http = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'https://application.shenzhuo.vip', // 使用环境变量
@@ -157,7 +179,12 @@ const form = reactive({
   userName: '',
   qqNum: '',
   onlineFlag: '',
-  remark: ''
+  remark: '',
+  checkedItems: {
+    joinedGroup: false,
+    readManual: false,
+    knowIP: false
+  }
 });
 
 let loading = false;
@@ -178,61 +205,85 @@ const debouncedRefresh = debounce((refresh) => {
 // 添加初始加载状态
 const initialLoading = ref(true);
 
+const router = useRouter();
+
 const submitForm = () => {
+  // 验证必填字段
   if (!form.userName || !form.qqNum || !form.onlineFlag) {
     ElMessage.error('请填写完整信息');
-  } else if (!/^\d{5,11}$/.test(form.qqNum)) {
-    ElMessage.error('QQ号格式错误');
-  } else {
-    fullscreenLoading.value = true;
-
-    const headers = {};
-    // 尝试获取用户IP，添加备用接
-    const getIpFromPrimarySource = () => {
-      return fetch('https://ip.useragentinfo.com/json')
-          .then(response => response.json())
-          .catch(error => {
-            console.warn('主要IP获取接口失败，尝试备用接口:', error);
-            return getIpFromBackupSource();
-          });
-    };
-
-    // 备用IP获取接口
-    const getIpFromBackupSource = () => {
-      return fetch('https://ipinfo.io/json')
-          .then(response => response.json())
-          .catch(error => {
-            console.warn('备用IP获取接口也失败:', error);
-            // 返回一个空对象，表示无法获取IP
-            return {};
-          });
-    };
-
-    // 开始获取IP
-    getIpFromPrimarySource()
-        .then(data => {
-          // 如果成功获取到IP，添加到请求头
-          if (data && data.ip) {
-            headers['X-Real-IP'] = data.ip;
-          }
-
-          // 发送表单请求
-          return http.post('/mc/whitelist/apply', form, {headers});
-        })
-        .then((res) => {
-          if (res.data.code === 200) {
-            ElMessage.success(res.data.msg);
-          } else {
-            ElMessage.error(res.data.msg || '未知错误，请联系管理员');
-          }
-          fullscreenLoading.value = false;
-        })
-        .catch((error) => {
-          console.error('提交表单请求出错：', error);
-          ElMessage.error('提交表单时发生错误，请检查网络或联系管理员');
-          fullscreenLoading.value = false;
-        });
+    return;
   }
+
+  // 验证QQ号格式
+  if (!/^\d{5,11}$/.test(form.qqNum)) {
+    ElMessage.error('QQ号格式错误');
+    return;
+  }
+
+  // 验证复选框
+  if (!form.checkedItems.joinedGroup) {
+    ElMessage.error('请确认已加入群组');
+    return;
+  }
+  if (!form.checkedItems.readManual) {
+    ElMessage.error('请确认已阅读手册');
+    return;
+  }
+  if (!form.checkedItems.knowIP) {
+    ElMessage.error('请确认已知晓服务器IP');
+    return;
+  }
+
+  fullscreenLoading.value = true;
+
+  const headers = {};
+  // 尝试获取用户IP，添加备用接
+  const getIpFromPrimarySource = () => {
+    return fetch('https://ip.useragentinfo.com/json')
+        .then(response => response.json())
+        .catch(error => {
+          console.warn('主要IP获取接口失败，尝试备用接口:', error);
+          return getIpFromBackupSource();
+        });
+  };
+
+  // 备用IP获取接口
+  const getIpFromBackupSource = () => {
+    return fetch('https://ipinfo.io/json')
+        .then(response => response.json())
+        .catch(error => {
+          console.warn('备用IP获取接口也失败:', error);
+          // 返回一个空对象，表示无法获取IP
+          return {};
+        });
+  };
+
+  // 开始获取IP
+  getIpFromPrimarySource()
+      .then(data => {
+        // 如果成功获取到IP，添加到请求头
+        if (data && data.ip) {
+          headers['X-Real-IP'] = data.ip;
+        }
+
+        // 发送表单请求
+        return http.post('/mc/whitelist/apply', form, {headers});
+      })
+      .then((res) => {
+        if (res.data.code === 200) {
+          ElMessage.success(res.data.msg);
+          // 提交成功后跳转到第三步
+          router.push('/whitelist-step3');
+        } else {
+          ElMessage.error(res.data.msg || '未知错误，请联系管理员');
+        }
+        fullscreenLoading.value = false;
+      })
+      .catch((error) => {
+        console.error('提交表单请求出错：', error);
+        ElMessage.error('提交表单时发生错误，请检查网络或联系管理员');
+        fullscreenLoading.value = false;
+      });
 };
 
 const getOnlinePlayer = (reflash) => {
@@ -327,11 +378,20 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize);
 });
+
+const readManual = () => {
+  window.open(WIKI);
+};
+
+const showIPInfo = () => {
+  window.open(WIKI);
+};
 </script>
 
 <style scoped>
 .app-wrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -341,18 +401,24 @@ onUnmounted(() => {
   animation: warmGradient 20s ease infinite;
   font-family: 'CustomFont', sans-serif;
   transition: background-image 0.5s ease;
+  padding: 40px 20px;
+  box-sizing: border-box;
 }
 
-@keyframes warmGradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+}
+
+.progress-container {
+  width: 100%;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 1002;
 }
 
 .form-container {
@@ -362,9 +428,11 @@ onUnmounted(() => {
   padding: 30px;
   border-radius: 24px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  width: min(100%, 500px);
+  width: 100%;
   transform: translateY(0);
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 1001;
 }
 
 .form-container:hover {
@@ -1134,11 +1202,19 @@ html.dark .submit-btn:hover {
 /* 修改移动端样式 */
 @media (max-width: 768px) {
   .app-wrapper {
-    flex-direction: column;
     padding: 20px;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+  }
+
+  .main-content {
+    width: 100%;
+  }
+
+  .progress-container {
+    margin-bottom: 20px;
+  }
+
+  .form-container {
+    width: 100%;
   }
 
   .form-container {
@@ -1774,5 +1850,51 @@ html.dark :deep(.el-form-item__label) {
 .form-container.focused {
   transform: translateY(-10px);
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.progress-container {
+  margin: 40px auto;
+  width: 100%;
+  max-width: 800px;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+  padding: 0 20px;
+}
+
+.clickable-text {
+  color: #409EFF;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: all 0.3s ease;
+}
+
+.clickable-text:hover {
+  color: #66b1ff;
+}
+
+/* 暗色模式适配 */
+html.dark .clickable-text {
+  color: #64B5F6;
+}
+
+html.dark .clickable-text:hover {
+  color: #90CAF9;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .progress-container {
+    margin: 20px auto;
+    padding: 0 20px;
+  }
+
+  .checkbox-group {
+    padding: 0 10px;
+  }
 }
 </style>
