@@ -9,15 +9,12 @@
     <div class="welcome-message">
       <h2>欢迎加入ImpartLab服务器</h2>
       <p>在开始之前，您需要：</p>
-      <ul>
-        <li>加入我们的QQ群，以便及时获取服务器动态和与其他玩家交流</li>
-        <li>仔细阅读服务器手册，了解服务器规则和玩法</li>
-      </ul>
+        <p>1、加入我们的QQ群，以便及时获取服务器动态和与其他玩家交流</p>
+        <p>2、仔细阅读服务器手册，了解服务器规则和玩法</p>
     </div>
 
     <!-- 主要内容区域 -->
     <div class="content-container">
-      <div class="button-group">
         <el-button type="primary" class="action-button" @click="joinQQGroup">
           <el-icon><ChatDotRound /></el-icon>
           加入QQ群
@@ -26,7 +23,6 @@
           <el-icon><Document /></el-icon>
           阅读手册
         </el-button>
-      </div>
     </div>
 
     <!-- 底部操作栏 -->
@@ -66,12 +62,18 @@ const goToNextStep = () => {
   flex-direction: column;
   position: relative;
   padding-bottom: 80px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .progress-container {
-  margin: 40px auto;
   width: 100%;
-  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 5%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .content-container {
@@ -81,10 +83,8 @@ const goToNextStep = () => {
   padding: 20px;
 }
 
-.button-group {
-  display: flex;
-  gap: 20px;
-  margin-top: 40px;
+.welcome-message {
+  padding: 40px 30px;
 }
 
 .action-button {
@@ -134,34 +134,5 @@ const goToNextStep = () => {
 .next-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(64, 158, 255, 0.2);
-}
-
-/* 暗色模式适配 */
-html.dark .bottom-bar {
-  background: rgba(30, 30, 40, 0.95);
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
-}
-
-/* 移动端适配 */
-@media (max-width: 768px) {
-  .progress-container {
-    margin: 20px auto;
-    padding: 0 20px;
-  }
-
-  .button-group {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .action-button {
-    width: 100%;
-    max-width: 300px;
-  }
-
-  .next-button {
-    width: 90%;
-    max-width: 300px;
-  }
 }
 </style> 

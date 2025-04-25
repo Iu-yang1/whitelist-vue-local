@@ -401,7 +401,8 @@ const showIPInfo = () => {
   animation: warmGradient 20s ease infinite;
   font-family: 'CustomFont', sans-serif;
   transition: background-image 0.5s ease;
-  padding: 40px 20px;
+  padding: 0 20px;
+  padding-bottom: 40px;
   box-sizing: border-box;
 }
 
@@ -416,9 +417,12 @@ const showIPInfo = () => {
 
 .progress-container {
   width: 100%;
-  margin-bottom: 40px;
-  position: relative;
-  z-index: 1002;
+  margin: 0 auto;
+  padding: 0 5%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .form-container {
@@ -428,11 +432,12 @@ const showIPInfo = () => {
   padding: 30px;
   border-radius: 24px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  width: 100%;
   transform: translateY(0);
   transition: all 0.3s ease;
   position: relative;
   z-index: 1001;
+  margin: 0 10px;
+  animation: fadeIn 0.6s ease-out;
 }
 
 .form-container:hover {
@@ -440,11 +445,18 @@ const showIPInfo = () => {
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
+.form-container.focused {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(var(--theme-primary-rgb), 0.2);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
 .title-container {
   text-align: center;
   margin-bottom: 25px;
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 0 10px;
@@ -595,10 +607,6 @@ const showIPInfo = () => {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.form-container {
-  animation: fadeIn 0.6s ease-out;
 }
 
 .server-status-container {
@@ -932,412 +940,6 @@ const showIPInfo = () => {
   }
   40%, 60% {
     transform: translateX(4px);
-  }
-}
-
-/* 优化表单容器 */
-.form-container {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-/* 优化提交按钮 */
-.submit-btn {
-  background: linear-gradient(45deg, #409EFF, #36cfc9);
-  border: none;
-  box-shadow: 0 4px 15px rgba(64, 158, 255, 0.3);
-}
-
-.submit-btn:hover {
-  background: linear-gradient(45deg, #66b1ff, #5cdbd3);
-  box-shadow: 0 6px 20px rgba(64, 158, 255, 0.4);
-}
-
-/* 优化单选按钮组样式 */
-:deep(.el-radio) {
-  margin-right: 20px;
-  transition: all 0.3s ease;
-}
-
-:deep(.el-radio:hover) {
-  transform: translateY(-2px);
-}
-
-:deep(.el-radio__input.is-checked + .el-radio__label) {
-  color: #409EFF;
-  font-weight: 500;
-}
-
-/* 樱花容器 */
-.sakura-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* 樱花样式 */
-.sakura {
-  position: absolute;
-  top: -10%;
-  left: var(--left);
-  width: var(--size);
-  height: var(--size);
-  background: #ffd7e6;
-  border-radius: 100% 0 100% 100%;
-  animation: fall var(--delay) linear infinite;
-  transform-origin: center;
-  opacity: 0.7;
-}
-
-.sakura::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: inherit;
-  border-radius: inherit;
-  transform: rotate(45deg);
-}
-
-/* 樱花飘落动画 */
-@keyframes fall {
-  0% {
-    top: -10%;
-    transform: rotate(0deg) translateX(0);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.7;
-  }
-  90% {
-    opacity: 0.7;
-  }
-  100% {
-    top: 100%;
-    transform: rotate(360deg) translateX(100px);
-    opacity: 0;
-  }
-}
-
-/* 修改服务器状态容器的z-index确保在樱花上层 */
-.server-status-container {
-  z-index: 1001;
-}
-
-/* 修改表单容器的z-index确保在樱花上层 */
-.form-container {
-  z-index: 1001;
-  position: relative;
-}
-
-/* 修改查看成员按钮样式 */
-.view-members-btn {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 14px;
-  color: var(--theme-primary);
-  transition: all 0.3s ease;
-  padding: 6px 12px;
-  border-radius: 15px;
-  background: rgba(var(--theme-primary-rgb), 0.1);
-  font-family: 'CustomFont', sans-serif;
-}
-
-.view-members-btn:hover {
-  color: var(--theme-secondary);
-  transform: translateY(-50%) translateX(-2px);
-  background: rgba(var(--theme-primary-rgb), 0.15);
-}
-
-.view-members-btn .el-icon {
-  font-size: 16px;
-}
-
-/* 主题特定样式 */
-[data-theme="sakura"] .title-container h2 {
-  text-shadow: 0 0 10px rgba(255, 105, 180, 0.3);
-}
-
-[data-theme="sakura"] .view-members-btn:hover {
-  text-shadow: 0 0 8px rgba(255, 105, 180, 0.3);
-}
-
-/* 暗色模式下的标题和按钮颜色 */
-.dark .title-container h2,
-.dark .view-members-btn {
-  color: var(--theme-text-dark);
-}
-
-.dark .view-members-btn:hover {
-  color: var(--theme-secondary);
-}
-
-/* 暗色模式样式 */
-html.dark .form-container {
-  background-color: rgba(30, 30, 40, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-html.dark .form-container:hover {
-  box-shadow: 0 12px 40px rgba(64, 158, 255, 0.2);
-  border: 1px solid rgba(64, 158, 255, 0.2);
-}
-
-html.dark .title-container h2 {
-  text-shadow: 0 0 10px rgba(64, 158, 255, 0.3);
-}
-
-html.dark .description {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-html.dark .submit-btn {
-  background: linear-gradient(45deg, #0a84ff, #00b3e6);
-  box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3);
-}
-
-html.dark .submit-btn:hover {
-  box-shadow: 0 6px 20px rgba(10, 132, 255, 0.5);
-}
-
-/* 为表单项添加微交互 */
-.el-form-item {
-  position: relative;
-}
-
-.animated-form :deep(.el-input),
-.animated-form :deep(.el-textarea) {
-  position: relative;
-  z-index: 1;
-}
-
-.animated-form :deep(.el-input::after),
-.animated-form :deep(.el-textarea::after) {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--theme-primary), transparent);
-  transition: width 0.3s ease, left 0.3s ease;
-  z-index: 0;
-}
-
-.animated-form :deep(.el-input:focus-within::after),
-.animated-form :deep(.el-textarea:focus-within::after) {
-  width: 100%;
-  left: 0%;
-}
-
-/* 赛博朋克主题特殊样式 */
-[data-theme="cyberpunk"] .server-status-container {
-  background: rgba(15, 10, 42, 0.85);
-  border-color: var(--theme-border);
-  box-shadow: var(--theme-neon-shadow);
-}
-
-[data-theme="cyberpunk"] .header-title,
-[data-theme="cyberpunk"] .server-name {
-  text-shadow: var(--theme-text-shadow);
-}
-
-[data-theme="cyberpunk"] .player-tag {
-  background: rgba(0, 255, 221, 0.1);
-  border-color: rgba(246, 24, 246, 0.3);
-  color: #00ffd5;
-  box-shadow: var(--theme-neon-shadow);
-  text-shadow: var(--theme-text-shadow);
-}
-
-[data-theme="cyberpunk"] .refresh-btn {
-  background: rgba(246, 24, 246, 0.2);
-  box-shadow: var(--theme-neon-shadow);
-}
-
-[data-theme="cyberpunk"] .refresh-btn:hover {
-  background: rgba(246, 24, 246, 0.3);
-}
-
-/* 暗色模式样式 */
-.dark .server-status-container {
-  background: var(--theme-bg-dark);
-  border-color: var(--theme-border-dark);
-}
-
-.dark .server-name {
-  color: var(--theme-text-dark);
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.dark .player-tag {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-  color: rgba(255, 255, 255, 0.9) !important;
-}
-
-.dark .player-tag:hover {
-  background-color: rgba(255, 255, 255, 0.15) !important;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
-}
-
-.dark .query-time {
-  color: var(--theme-text-dark);
-  opacity: 0.6;
-}
-
-/* 修改移动端样式 */
-@media (max-width: 768px) {
-  .app-wrapper {
-    padding: 20px;
-  }
-
-  .main-content {
-    width: 100%;
-  }
-
-  .progress-container {
-    margin-bottom: 20px;
-  }
-
-  .form-container {
-    width: 100%;
-  }
-
-  .form-container {
-    margin: 0;
-    width: 100%;
-    max-width: 500px;
-    animation: fadeIn 0.5s ease-out;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  /* 移动端表单容器适配 */
-  .form-container:hover {
-    transform: none;
-  }
-
-  /* 添加表单聚焦效果 */
-  .form-container.focused {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(var(--theme-primary-rgb), 0.2);
-  }
-
-  /* 修改查看成员按钮样式在移动端的表现 */
-  .view-members-btn {
-    font-size: 12px;
-    padding: 4px 8px;
-  }
-
-  /* 优化表单元素在移动端的显示 */
-  :deep(.el-form-item__label) {
-    padding-right: 8px;
-  }
-
-  :deep(.el-radio) {
-    margin-right: 12px;
-  }
-
-  .animated-form :deep(.el-form-item:hover) {
-    transform: none;
-  }
-
-  /* 美化提交按钮 */
-  .submit-btn {
-    transform: scale(1);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 80%;
-    margin: 0 auto;
-    border-radius: 12px;
-    background: linear-gradient(45deg, #409EFF, #36cfc9);
-    box-shadow: 0 4px 15px rgba(64, 158, 255, 0.2);
-  }
-
-  .submit-btn:hover, .submit-btn:active {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(64, 158, 255, 0.4);
-  }
-}
-
-/* 添加表单标题动画效果 */
-.title-container h2 {
-  position: relative;
-  overflow: hidden;
-}
-
-.title-container h2::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--theme-primary), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
-}
-
-.form-container:hover .title-container h2::after {
-  transform: translateX(100%);
-}
-
-/* 添加输入框和按钮焦点状态的动效 */
-:deep(.el-input__inner:focus),
-:deep(.el-textarea__inner:focus) {
-  animation: inputPulse 2s infinite;
-}
-
-@keyframes inputPulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(64, 158, 255, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 6px rgba(64, 158, 255, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(64, 158, 255, 0);
-  }
-}
-
-/* 特小屏幕适配 */
-@media (max-width: 360px) {
-  .app-wrapper {
-    padding: 15px;
-  }
-
-  .view-members-btn {
-    right: 10px;
-    font-size: 12px;
-    padding: 3px 8px;
-  }
-
-  .title-container h2 {
-    margin-right: 70px;
-    font-size: 22px;
-  }
-
-  .form-container {
-    padding: 20px;
-  }
-
-  .server-status-container {
-    margin-top: 15px;
   }
 }
 

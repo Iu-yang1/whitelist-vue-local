@@ -45,11 +45,16 @@ defineProps({
   align-items: center;
   justify-content: center;
   padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .step-container {
   display: flex;
   align-items: center;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .step-box {
@@ -74,6 +79,7 @@ defineProps({
 .step-name {
   font-size: 12px;
   white-space: nowrap;
+  text-align: center;
 }
 
 .current-step {
@@ -110,4 +116,45 @@ defineProps({
 .pending-connector {
   background-color: #e0e0e0;
 }
+
+  .filter-bar {
+    padding: 20px 5%;
+    width: 90%;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .step-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .step-box {
+    display: flex;
+    flex-direction: row;
+    min-width: auto;
+    padding: 8px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .step-number {
+    margin-bottom: 0;
+    margin-right: 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .step-name {
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .step-connector {
+    display: none;
+  }
+
 </style> 

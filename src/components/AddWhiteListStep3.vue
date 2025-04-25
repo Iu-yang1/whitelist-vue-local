@@ -66,12 +66,19 @@ const goToNextStep = () => {
   flex-direction: column;
   position: relative;
   padding-bottom: 80px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .progress-container {
   margin: 40px auto;
   width: 100%;
   max-width: 800px;
+  padding: 0 5%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .content-container {
@@ -169,7 +176,7 @@ html.dark .status-message {
 @media (max-width: 768px) {
   .progress-container {
     margin: 20px auto;
-    padding: 0 20px;
+    padding: 0 5%;
   }
 
   .status-message {
