@@ -64,10 +64,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
+import {onMounted, ref} from 'vue'
+import {ElMessage} from 'element-plus'
 import axios from 'axios'
-import { Back, Loading, Monitor, Refresh, Timer, User } from '@element-plus/icons-vue'
+import {Back, Loading, Monitor, Refresh, Timer, User} from '@element-plus/icons-vue'
 
 const loading = ref(false)
 const servers = ref([])

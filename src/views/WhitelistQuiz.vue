@@ -60,6 +60,15 @@
                   type="textarea">
               </el-input>
             </div>
+
+            <!-- 数学验证题 -->
+            <div v-else-if="question.questionType === 4" class="question-options">
+              <el-input
+                  v-model="answers[question.id]"
+                  placeholder="请输入验证答案"
+                  type="text">
+              </el-input>
+            </div>
           </div>
 
           <div class="actions">
@@ -213,10 +222,14 @@ const submitAnswers = async () => {
     const apiUrl = import.meta.env.VITE_API_URL
 
     // 转换答案格式
-    const formattedAnswers = Object.entries(answers.value).map(([questionId, answer]) => ({
-      questionId: parseInt(questionId),
-      answer: Array.isArray(answer) ? answer.join(',') : String(answer || '')
-    }))
+    const formattedAnswers = Object.entries(answers.value).map(([questionId, answer]) => {
+      const question = questions.value.find(q => q.id === parseInt(questionId))
+      return {
+        questionId: parseInt(questionId),
+        answer: Array.isArray(answer) ? answer.join(',') : String(answer || ''),
+        verificationId: question.questionType === 4 ? question.verificationId : undefined
+      }
+    })
 
     const res = await axios.post(`${apiUrl}/api/v1/submitQuiz`, {
       code: code.value,
