@@ -237,9 +237,14 @@ const submitForm = () => {
   fullscreenLoading.value = true;
 
   const headers = {};
-  // 尝试获取用户IP，添加备用接
+  // 尝试获取用户IP，添加备用接口
   const getIpFromPrimarySource = () => {
-    return fetch('https://ip.useragentinfo.com/json')
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+      return fetch('https://ip.useragentinfo.com/json', {
+        signal: controller.signal
+      })
         .then(response => response.json())
         .catch(error => {
           console.warn('主要IP获取接口失败，尝试备用接口:', error);

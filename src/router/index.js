@@ -61,7 +61,11 @@ const router = createRouter({
         {
             path: '/:pathMatch(.*)*',
             redirect: '/404'
-        }
+        },
+        {
+            path: '/player-servers',
+            redirect: '/404'
+        },
     ]
 })
 
