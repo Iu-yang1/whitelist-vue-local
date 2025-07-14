@@ -7,135 +7,154 @@
     <SakuraBackground
         :currentTheme="currentTheme"
     />
-    <div
-        v-if="!isMobile"
-        class="server-status-container"
-        :class="{ 'form-focused': isFormFocused }"
-    >
-      <div class="status-header">
-        <div class="header-title">
-          <i class="el-icon-monitor"></i>
-          <span>服务器状态</span>
-          <el-button
-              :loading="loading"
-              class="refresh-btn"
-              size="small"
-              @click="debouncedRefresh(true)"
-          >
-            <el-icon>
-              <Refresh/>
-            </el-icon>
-          </el-button>
-        </div>
+    <div class="main-content">
+      <div class="progress-container">
+        <FilterBar
+          :steps="['加入须知', '白名单填写', '等待审核', '下载整合包']"
+          :currentStep="2"
+        />
       </div>
-      <div class="status-content">
-        <div v-if="initialLoading" class="loading-state">
-          <el-icon class="loading-icon">
-            <Loading/>
-          </el-icon>
-          <span>加载中...</span>
+      <div
+          v-if="!isMobile"
+          class="server-status-container"
+          :class="{ 'form-focused': isFormFocused }"
+      >
+        <div class="status-header">
+          <div class="header-title">
+            <i class="el-icon-monitor"></i>
+            <span>服务器状态</span>
+            <el-button
+                :loading="loading"
+                class="refresh-btn"
+                size="small"
+                @click="debouncedRefresh(true)"
+            >
+              <el-icon>
+                <Refresh/>
+              </el-icon>
+            </el-button>
+          </div>
         </div>
+        <div class="status-content">
+          <div v-if="initialLoading" class="loading-state">
+            <el-icon class="loading-icon">
+              <Loading/>
+            </el-icon>
+            <span>加载中...</span>
+          </div>
 
-        <template v-else>
-          <div v-for="(server, index) in displayedServers"
-               :key="server.name"
-               class="server-block animate-in">
-            <div class="server-name">
-              <i class="el-icon-connection"></i>
-              {{ server.name }}
-            </div>
-            <div class="online-info">
-              <div v-if="server.players.length > 0" class="player-list">
-                <div class="players-label">
-                  <i class="el-icon-user"></i>
-                  在线玩家 ({{ server.playerCount }})：
-                </div>
-                <div class="players-container">
-                  <el-tag
-                      v-for="player in server.players"
-                      :key="player"
-                      class="player-tag"
-                      effect="light"
-                      size="small"
-                  >
-                    {{ player }}
-                  </el-tag>
+          <template v-else>
+            <div v-for="(server, index) in displayedServers"
+                 :key="server.name"
+                 class="server-block animate-in">
+              <div class="server-name">
+                <i class="el-icon-connection"></i>
+                {{ server.name }}
+              </div>
+              <div class="online-info">
+                <div v-if="server.players.length > 0" class="player-list">
+                  <div class="players-label">
+                    <i class="el-icon-user"></i>
+                    在线玩家 ({{ server.playerCount }})：
+                  </div>
+                  <div class="players-container">
+                    <el-tag
+                        v-for="player in server.players"
+                        :key="player"
+                        class="player-tag"
+                        effect="light"
+                        size="small"
+                    >
+                      {{ player }}
+                    </el-tag>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div v-if="showViewMore" class="view-more-container">
-            <el-button
-                class="view-more-btn"
-                type="primary"
-                text
-                @click="$router.push('/server-status')"
-            >
-              <el-icon><ArrowRight /></el-icon>
-              查看更多服务器
-            </el-button>
-          </div>
+            <div v-if="showViewMore" class="view-more-container">
+              <el-button
+                  class="view-more-btn"
+                  type="primary"
+                  text
+                  @click="$router.push('/server-status')"
+              >
+                <el-icon><ArrowRight /></el-icon>
+                查看更多服务器
+              </el-button>
+            </div>
 
-          <div class="query-time animate-in">
-            <i class="el-icon-time"></i>
-            {{ serverStatus.queryTime }}
-          </div>
-        </template>
-      </div>
-    </div>
-
-    <div
-        class="form-container"
-        :class="{ 'focused': isFormFocused }"
-        @click="handleFormFocus"
-        @touchstart="handleFormFocus"
-    >
-      <div class="title-container">
-        <i class="el-icon-user-solid"></i>
-        <h2>白名单申请</h2>
-        <el-button
-            class="view-members-btn"
-            text
-            type="primary"
-            @click="$router.push('/whitelist-members')"
-        >
-          <el-icon>
-            <User/>
-          </el-icon>
-          查看成员
-        </el-button>
+            <div class="query-time animate-in">
+              <i class="el-icon-time"></i>
+              {{ serverStatus.queryTime }}
+            </div>
+          </template>
+        </div>
       </div>
 
-      <div class="description">
-        欢迎加入我们的服务器！请填写以下信息完成白名单申请。
-      </div>
-
-      <el-form :model="form" class="animated-form" label-width="auto">
-        <el-form-item label="ID：">
-          <el-input v-model="form.userName" placeholder="请输入游戏名称"></el-input>
-        </el-form-item>
-        <el-form-item label="QQ：">
-          <el-input v-model="form.qqNum" placeholder="请输入QQ号"></el-input>
-        </el-form-item>
-        <el-form-item label="正版：">
-          <el-radio-group v-model="form.onlineFlag">
-            <el-radio label="1">是</el-radio>
-            <el-radio label="0">否</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="描述：" label-width="auto">
-          <el-input v-model="form.remark" placeholder="请输入描述 非必填" type="textarea"></el-input>
-        </el-form-item>
-        <div class="button-group">
-          <el-button v-loading.fullscreen.lock="fullscreenLoading"
-                     class="submit-btn"
-                     type="primary"
-                     @click="submitForm">
-            <i class="el-icon-check"></i> 提交申请
+      <div
+          class="form-container"
+          :class="{ 'focused': isFormFocused }"
+          @click="handleFormFocus"
+          @touchstart="handleFormFocus"
+      >
+        <div class="title-container">
+          <i class="el-icon-user-solid"></i>
+          <h2>白名单申请</h2>
+          <el-button
+              class="view-members-btn"
+              text
+              type="primary"
+              @click="$router.push('/whitelist-members')"
+          >
+            <el-icon>
+              <User/>
+            </el-icon>
+            查看成员
           </el-button>
         </div>
-      </el-form>
+
+        <div class="description">
+          欢迎加入我们的服务器！请填写以下信息完成白名单申请。
+        </div>
+
+        <el-form :model="form" class="animated-form" label-width="auto">
+          <el-form-item label="ID：">
+            <el-input v-model="form.userName" placeholder="请输入游戏名称"></el-input>
+          </el-form-item>
+          <el-form-item label="QQ：">
+            <el-input v-model="form.qqNum" placeholder="请输入QQ号"></el-input>
+          </el-form-item>
+          <el-form-item label="正版：">
+            <el-radio-group v-model="form.onlineFlag">
+              <el-radio label="1">是</el-radio>
+              <el-radio label="0">否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="描述：" label-width="auto">
+            <el-input v-model="form.remark" placeholder="请输入描述 非必填" type="textarea"></el-input>
+          </el-form-item>
+          <div class="checkbox-group">
+            <el-checkbox v-model="form.checkedItems.joinedGroup">
+              我已加群
+            </el-checkbox>
+            <el-checkbox v-model="form.checkedItems.readManual">
+              <span class="clickable-text" @click="readManual">我已阅读手册</span>
+            </el-checkbox>
+            <el-checkbox v-model="form.checkedItems.knowIP">
+              <span class="clickable-text" @click="showIPInfo">已知晓ip</span>
+            </el-checkbox>
+          </div>
+          <div class="button-group">
+            <el-button v-loading.fullscreen.lock="fullscreenLoading"
+                       class="submit-btn"
+                       type="primary"
+                       @click="submitForm">
+              <i class="el-icon-check"></i> 提交申请
+            </el-button>
+          </div>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -147,9 +166,12 @@ import axios from 'axios';
 import {ArrowRight, Loading, Refresh, User} from '@element-plus/icons-vue'
 import {debounce} from 'lodash-es';
 import SakuraBackground from './common/SakuraBackground.vue'
+import FilterBar from './common/FilterBar.vue';
+import { useRouter } from 'vue-router';
+import {WIKI} from "@/config/links.js";
 
 const http = axios.create({
-  baseURL: import.meta.env.VITE_API_URL, // 使用环境变量
+  baseURL: import.meta.env.VITE_API_URL || 'https://application.shenzhuo.vip', // 使用环境变量
   timeout: 8000
 });
 
@@ -157,7 +179,12 @@ const form = reactive({
   userName: '',
   qqNum: '',
   onlineFlag: '',
-  remark: ''
+  remark: '',
+  checkedItems: {
+    joinedGroup: false,
+    readManual: false,
+    knowIP: false
+  }
 });
 
 let loading = false;
@@ -178,73 +205,90 @@ const debouncedRefresh = debounce((refresh) => {
 // 添加初始加载状态
 const initialLoading = ref(true);
 
+const router = useRouter();
+
 const submitForm = () => {
+  // 验证必填字段
   if (!form.userName || !form.qqNum || !form.onlineFlag) {
     ElMessage.error('请填写完整信息');
-  } else if (!/^\d{5,11}$/.test(form.qqNum)) {
-    ElMessage.error('QQ号格式错误');
-  } else {
-    fullscreenLoading.value = true;
+    return;
+  }
 
-    const headers = {};
-    // 尝试获取用户IP，添加备用接
-    const getIpFromPrimarySource = () => {
+  // 验证QQ号格式
+  if (!/^\d{5,11}$/.test(form.qqNum)) {
+    ElMessage.error('QQ号格式错误');
+    return;
+  }
+
+  // 验证复选框
+  if (!form.checkedItems.joinedGroup) {
+    ElMessage.error('请确认已加入群组');
+    return;
+  }
+  if (!form.checkedItems.readManual) {
+    ElMessage.error('请确认已阅读手册');
+    return;
+  }
+  if (!form.checkedItems.knowIP) {
+    ElMessage.error('请确认已知晓服务器IP');
+    return;
+  }
+
+  fullscreenLoading.value = true;
+
+  const headers = {};
+  // 尝试获取用户IP，添加备用接口
+  const getIpFromPrimarySource = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000);
 
       return fetch('https://ip.useragentinfo.com/json', {
         signal: controller.signal
       })
-          .then(response => response.json())
-          .catch(error => {
-            console.warn('主要IP获取接口失败，尝试备用接口:', error);
-            return getIpFromBackupSource();
-          })
-          .finally(() => clearTimeout(timeoutId));
-    };
-
-    // 备用IP获取接口
-    const getIpFromBackupSource = () => {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
-
-      return fetch('https://ipinfo.io/json', {
-        signal: controller.signal
-      })
-          .then(response => response.json())
-          .catch(error => {
-            console.warn('备用IP获取接口也失败:', error);
-            // 返回一个空对象，表示无法获取IP
-            return {};
-          })
-          .finally(() => clearTimeout(timeoutId));
-    };
-
-    // 开始获取IP
-    getIpFromPrimarySource()
-        .then(data => {
-          // 如果成功获取到IP，添加到请求头
-          if (data && data.ip) {
-            headers['X-Real-IP'] = data.ip;
-          }
-
-          // 发送表单请求
-          return http.post('/mc/whitelist/apply', form, {headers});
-        })
-        .then((res) => {
-          if (res.data.code === 200) {
-            ElMessage.success(res.data.msg);
-          } else {
-            ElMessage.error(res.data.msg || '未知错误，请联系管理员');
-          }
-          fullscreenLoading.value = false;
-        })
-        .catch((error) => {
-          console.error('提交表单请求出错：', error);
-          ElMessage.error('提交表单时发生错误，请检查网络或联系管理员');
-          fullscreenLoading.value = false;
+        .then(response => response.json())
+        .catch(error => {
+          console.warn('主要IP获取接口失败，尝试备用接口:', error);
+          return getIpFromBackupSource();
         });
-  }
+  };
+
+  // 备用IP获取接口
+  const getIpFromBackupSource = () => {
+    return fetch('https://ipinfo.io/json')
+        .then(response => response.json())
+        .catch(error => {
+          console.warn('备用IP获取接口也失败:', error);
+          // 返回一个空对象，表示无法获取IP
+          return {};
+        });
+  };
+
+  // 开始获取IP
+  getIpFromPrimarySource()
+      .then(data => {
+        // 如果成功获取到IP，添加到请求头
+        if (data && data.ip) {
+          headers['X-Real-IP'] = data.ip;
+        }
+
+        // 发送表单请求
+        return http.post('/mc/whitelist/apply', form, {headers});
+      })
+      .then((res) => {
+        if (res.data.code === 200) {
+          ElMessage.success(res.data.msg);
+          // 提交成功后跳转到第三步
+          router.push('/whitelist-step3');
+        } else {
+          ElMessage.error(res.data.msg || '未知错误，请联系管理员');
+        }
+        fullscreenLoading.value = false;
+      })
+      .catch((error) => {
+        console.error('提交表单请求出错：', error);
+        ElMessage.error('提交表单时发生错误，请检查网络或联系管理员');
+        fullscreenLoading.value = false;
+      });
 };
 
 const getOnlinePlayer = (reflash) => {
@@ -339,11 +383,20 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize);
 });
+
+const readManual = () => {
+  window.open(WIKI);
+};
+
+const showIPInfo = () => {
+  window.open(WIKI);
+};
 </script>
 
 <style scoped>
 .app-wrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -353,18 +406,28 @@ onUnmounted(() => {
   animation: warmGradient 20s ease infinite;
   font-family: 'CustomFont', sans-serif;
   transition: background-image 0.5s ease;
+  padding: 0 20px;
+  padding-bottom: 40px;
+  box-sizing: border-box;
 }
 
-@keyframes warmGradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+}
+
+.progress-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 5%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .form-container {
@@ -374,9 +437,12 @@ onUnmounted(() => {
   padding: 30px;
   border-radius: 24px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  width: min(100%, 500px);
   transform: translateY(0);
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 1001;
+  margin: 0 10px;
+  animation: fadeIn 0.6s ease-out;
 }
 
 .form-container:hover {
@@ -384,11 +450,18 @@ onUnmounted(() => {
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
+.form-container.focused {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(var(--theme-primary-rgb), 0.2);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
 .title-container {
   text-align: center;
   margin-bottom: 25px;
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 0 10px;
@@ -539,10 +612,6 @@ onUnmounted(() => {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.form-container {
-  animation: fadeIn 0.6s ease-out;
 }
 
 .server-status-container {
@@ -876,404 +945,6 @@ onUnmounted(() => {
   }
   40%, 60% {
     transform: translateX(4px);
-  }
-}
-
-/* 优化表单容器 */
-.form-container {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-/* 优化提交按钮 */
-.submit-btn {
-  background: linear-gradient(45deg, #409EFF, #36cfc9);
-  border: none;
-  box-shadow: 0 4px 15px rgba(64, 158, 255, 0.3);
-}
-
-.submit-btn:hover {
-  background: linear-gradient(45deg, #66b1ff, #5cdbd3);
-  box-shadow: 0 6px 20px rgba(64, 158, 255, 0.4);
-}
-
-/* 优化单选按钮组样式 */
-:deep(.el-radio) {
-  margin-right: 20px;
-  transition: all 0.3s ease;
-}
-
-:deep(.el-radio:hover) {
-  transform: translateY(-2px);
-}
-
-:deep(.el-radio__input.is-checked + .el-radio__label) {
-  color: #409EFF;
-  font-weight: 500;
-}
-
-/* 樱花容器 */
-.sakura-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* 樱花样式 */
-.sakura {
-  position: absolute;
-  top: -10%;
-  left: var(--left);
-  width: var(--size);
-  height: var(--size);
-  background: #ffd7e6;
-  border-radius: 100% 0 100% 100%;
-  animation: fall var(--delay) linear infinite;
-  transform-origin: center;
-  opacity: 0.7;
-}
-
-.sakura::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: inherit;
-  border-radius: inherit;
-  transform: rotate(45deg);
-}
-
-/* 樱花飘落动画 */
-@keyframes fall {
-  0% {
-    top: -10%;
-    transform: rotate(0deg) translateX(0);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.7;
-  }
-  90% {
-    opacity: 0.7;
-  }
-  100% {
-    top: 100%;
-    transform: rotate(360deg) translateX(100px);
-    opacity: 0;
-  }
-}
-
-/* 修改服务器状态容器的z-index确保在樱花上层 */
-.server-status-container {
-  z-index: 1001;
-}
-
-/* 修改表单容器的z-index确保在樱花上层 */
-.form-container {
-  z-index: 1001;
-  position: relative;
-}
-
-/* 修改查看成员按钮样式 */
-.view-members-btn {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 14px;
-  color: var(--theme-primary);
-  transition: all 0.3s ease;
-  padding: 6px 12px;
-  border-radius: 15px;
-  background: rgba(var(--theme-primary-rgb), 0.1);
-  font-family: 'CustomFont', sans-serif;
-}
-
-.view-members-btn:hover {
-  color: var(--theme-secondary);
-  transform: translateY(-50%) translateX(-2px);
-  background: rgba(var(--theme-primary-rgb), 0.15);
-}
-
-.view-members-btn .el-icon {
-  font-size: 16px;
-}
-
-/* 主题特定样式 */
-[data-theme="sakura"] .title-container h2 {
-  text-shadow: 0 0 10px rgba(255, 105, 180, 0.3);
-}
-
-[data-theme="sakura"] .view-members-btn:hover {
-  text-shadow: 0 0 8px rgba(255, 105, 180, 0.3);
-}
-
-/* 暗色模式下的标题和按钮颜色 */
-.dark .title-container h2,
-.dark .view-members-btn {
-  color: var(--theme-text-dark);
-}
-
-.dark .view-members-btn:hover {
-  color: var(--theme-secondary);
-}
-
-/* 暗色模式样式 */
-html.dark .form-container {
-  background-color: rgba(30, 30, 40, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-html.dark .form-container:hover {
-  box-shadow: 0 12px 40px rgba(64, 158, 255, 0.2);
-  border: 1px solid rgba(64, 158, 255, 0.2);
-}
-
-html.dark .title-container h2 {
-  text-shadow: 0 0 10px rgba(64, 158, 255, 0.3);
-}
-
-html.dark .description {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-html.dark .submit-btn {
-  background: linear-gradient(45deg, #0a84ff, #00b3e6);
-  box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3);
-}
-
-html.dark .submit-btn:hover {
-  box-shadow: 0 6px 20px rgba(10, 132, 255, 0.5);
-}
-
-/* 为表单项添加微交互 */
-.el-form-item {
-  position: relative;
-}
-
-.animated-form :deep(.el-input),
-.animated-form :deep(.el-textarea) {
-  position: relative;
-  z-index: 1;
-}
-
-.animated-form :deep(.el-input::after),
-.animated-form :deep(.el-textarea::after) {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--theme-primary), transparent);
-  transition: width 0.3s ease, left 0.3s ease;
-  z-index: 0;
-}
-
-.animated-form :deep(.el-input:focus-within::after),
-.animated-form :deep(.el-textarea:focus-within::after) {
-  width: 100%;
-  left: 0%;
-}
-
-/* 赛博朋克主题特殊样式 */
-[data-theme="cyberpunk"] .server-status-container {
-  background: rgba(15, 10, 42, 0.85);
-  border-color: var(--theme-border);
-  box-shadow: var(--theme-neon-shadow);
-}
-
-[data-theme="cyberpunk"] .header-title,
-[data-theme="cyberpunk"] .server-name {
-  text-shadow: var(--theme-text-shadow);
-}
-
-[data-theme="cyberpunk"] .player-tag {
-  background: rgba(0, 255, 221, 0.1);
-  border-color: rgba(246, 24, 246, 0.3);
-  color: #00ffd5;
-  box-shadow: var(--theme-neon-shadow);
-  text-shadow: var(--theme-text-shadow);
-}
-
-[data-theme="cyberpunk"] .refresh-btn {
-  background: rgba(246, 24, 246, 0.2);
-  box-shadow: var(--theme-neon-shadow);
-}
-
-[data-theme="cyberpunk"] .refresh-btn:hover {
-  background: rgba(246, 24, 246, 0.3);
-}
-
-/* 暗色模式样式 */
-.dark .server-status-container {
-  background: var(--theme-bg-dark);
-  border-color: var(--theme-border-dark);
-}
-
-.dark .server-name {
-  color: var(--theme-text-dark);
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.dark .player-tag {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-  color: rgba(255, 255, 255, 0.9) !important;
-}
-
-.dark .player-tag:hover {
-  background-color: rgba(255, 255, 255, 0.15) !important;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
-}
-
-.dark .query-time {
-  color: var(--theme-text-dark);
-  opacity: 0.6;
-}
-
-/* 修改移动端样式 */
-@media (max-width: 768px) {
-  .app-wrapper {
-    flex-direction: column;
-    padding: 20px;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-  }
-
-  .form-container {
-    margin: 0;
-    width: 100%;
-    max-width: 500px;
-    animation: fadeIn 0.5s ease-out;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  /* 移动端表单容器适配 */
-  .form-container:hover {
-    transform: none;
-  }
-
-  /* 添加表单聚焦效果 */
-  .form-container.focused {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(var(--theme-primary-rgb), 0.2);
-  }
-
-  /* 修改查看成员按钮样式在移动端的表现 */
-  .view-members-btn {
-    font-size: 12px;
-    padding: 4px 8px;
-  }
-
-  /* 优化表单元素在移动端的显示 */
-  :deep(.el-form-item__label) {
-    padding-right: 8px;
-  }
-
-  :deep(.el-radio) {
-    margin-right: 12px;
-  }
-
-  .animated-form :deep(.el-form-item:hover) {
-    transform: none;
-  }
-
-  /* 美化提交按钮 */
-  .submit-btn {
-    transform: scale(1);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 80%;
-    margin: 0 auto;
-    border-radius: 12px;
-    background: linear-gradient(45deg, #409EFF, #36cfc9);
-    box-shadow: 0 4px 15px rgba(64, 158, 255, 0.2);
-  }
-
-  .submit-btn:hover, .submit-btn:active {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(64, 158, 255, 0.4);
-  }
-}
-
-/* 添加表单标题动画效果 */
-.title-container h2 {
-  position: relative;
-  overflow: hidden;
-}
-
-.title-container h2::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--theme-primary), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
-}
-
-.form-container:hover .title-container h2::after {
-  transform: translateX(100%);
-}
-
-/* 添加输入框和按钮焦点状态的动效 */
-:deep(.el-input__inner:focus),
-:deep(.el-textarea__inner:focus) {
-  animation: inputPulse 2s infinite;
-}
-
-@keyframes inputPulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(64, 158, 255, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 6px rgba(64, 158, 255, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(64, 158, 255, 0);
-  }
-}
-
-/* 特小屏幕适配 */
-@media (max-width: 360px) {
-  .app-wrapper {
-    padding: 15px;
-  }
-
-  .view-members-btn {
-    right: 10px;
-    font-size: 12px;
-    padding: 3px 8px;
-  }
-
-  .title-container h2 {
-    margin-right: 70px;
-    font-size: 22px;
-  }
-
-  .form-container {
-    padding: 20px;
-  }
-
-  .server-status-container {
-    margin-top: 15px;
   }
 }
 
@@ -1786,5 +1457,51 @@ html.dark :deep(.el-form-item__label) {
 .form-container.focused {
   transform: translateY(-10px);
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.progress-container {
+  margin: 40px auto;
+  width: 100%;
+  max-width: 800px;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+  padding: 0 20px;
+}
+
+.clickable-text {
+  color: #409EFF;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: all 0.3s ease;
+}
+
+.clickable-text:hover {
+  color: #66b1ff;
+}
+
+/* 暗色模式适配 */
+html.dark .clickable-text {
+  color: #64B5F6;
+}
+
+html.dark .clickable-text:hover {
+  color: #90CAF9;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .progress-container {
+    margin: 20px auto;
+    padding: 0 20px;
+  }
+
+  .checkbox-group {
+    padding: 0 10px;
+  }
 }
 </style>
