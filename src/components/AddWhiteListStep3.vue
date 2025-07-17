@@ -16,19 +16,19 @@
         <span>审核已提交</span>
       </div>
       <div class="waiting-message">
-        <p>您的申请已提交至管理员审核，审核通过后即可获得服务器访问权限</p>
+        <p>您的申请已提交，请前往邮箱完成验证，验证通过后即可获得服务器访问权限</p>
       </div>
 
       <!-- 操作按钮组 -->
       <div class="action-buttons">
         <el-button type="primary" class="action-button" @click="queryWhitelist">
           <el-icon><Search /></el-icon>
-          查询白名单
+          前往QQ邮箱验证
         </el-button>
-        <el-button type="info" class="action-button" @click="showFAQ">
+<!--        <el-button type="info" class="action-button" @click="showFAQ">
           <el-icon><QuestionFilled /></el-icon>
           疑难解答
-        </el-button>
+        </el-button>-->
       </div>
     </div>
 
@@ -46,10 +46,12 @@
 import { useRouter } from 'vue-router';
 import FilterBar from './common/FilterBar.vue';
 import { CircleCheck, Search, QuestionFilled, ArrowRight } from '@element-plus/icons-vue';
+import {QQ_MAIL} from "@/config/links.js";
 
 const router = useRouter();
 
 const queryWhitelist = () => {
+  window.open(QQ_MAIL)
 };
 
 const showFAQ = () => {
@@ -109,8 +111,9 @@ const goToNextStep = () => {
 
 .action-buttons {
   display: flex;
-  gap: 20px;
-  margin-top: 20px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
 .action-button {
@@ -123,6 +126,7 @@ const goToNextStep = () => {
   gap: 8px;
   border-radius: 8px;
   transition: all 0.3s ease;
+  margin: 0;
 }
 
 .action-button:hover {
